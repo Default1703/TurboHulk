@@ -6,3 +6,4 @@ function main() begin
     conclusion("turbo output")!
 end
 ```
+In this code, everything is clear except for the ‘!’ seperator. It serves to make the interpreter understand that this must be done right now.
