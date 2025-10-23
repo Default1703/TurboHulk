@@ -47,6 +47,47 @@ Token[] tokenize(string source) {
             tokens ~= new Token(type, identifier, pos, col);
             ++pos;
             continue;
+        } else if(current == '"') {
+            ++pos;
+
+            size_t start = pos;
+
+            while(pos < LEN && pos+1 < LEN && source[pos+1] != '"') {
+                ++pos;
+            }
+
+            ++pos;
+
+            string ident = source[start..pos];
+
+            tokens ~= new Token(TokenType.STRING, ident, pos, col);
+            ++pos;
+            continue;
+        } else if(current.isDigit) {
+            size_t start = pos;
+            bool isFloat = false;
+
+            while(pos < LEN && (source[pos].isDigit || source[pos] == '.')) {
+                if(source[pos] == '.') {
+                    if(!isFloat) {
+                        isFloat = true;
+                    } else {
+                        throw new Exception("Error: Extra point '" ~ source[pos] ~ "' on line " ~ to!string(col)); 
+                    }
+                }
+                ++pos;
+            }
+
+            string ident = source[start..pos];
+            TokenType type = TokenType.INT;
+
+            if(isFloat) {
+                type = TokenType.FLOAT;
+            }
+
+            tokens ~= new Token(type, ident, pos, col);
+            ++pos;
+            continue;
         }
 
         switch(current) {
@@ -81,9 +122,7 @@ Token[] tokenize(string source) {
 
 void main() {
     string source = `
-    function main() {
-        conclusion()!
-    }
+    23.4
     `;
     Token[] tokens = tokenize(source);
 
